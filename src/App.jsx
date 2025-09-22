@@ -24,7 +24,6 @@ const PROJECTS = [
   {
     id: 1,
     title: "Мыло ручной работы",
-    category: "Инфографика",
     cover:
       "first_project/main_page.png",
     tags: ["Ozon", "Карточки"],
@@ -34,7 +33,6 @@ const PROJECTS = [
   {
     id: 2,
     title: "Наматрасник",
-    category: "Инфографика",
     cover:
       "second_project/1.png",
     tags: ["Wildberries", "Карточки"],
@@ -423,7 +421,6 @@ export default function PortfolioSite() {
                 <div className="absolute inset-x-0 bottom-0 p-4 text-white bg-gradient-to-t from-black/60 via-black/30 to-transparent transition-all duration-300 md:opacity-0 md:translate-y-2 md:group-hover:opacity-100 md:group-hover:translate-y-0">
                   <div className="flex items-center justify-between gap-4">
                     <h3 className="font-medium text-lg">{p.title}</h3>
-                    <span className="text-xs opacity-90">{p.category}</span>
                   </div>
                   <p className="mt-1.5 text-sm opacity-90 line-clamp-2">{p.description}</p>
                   <div className="mt-2 flex flex-wrap gap-2">
