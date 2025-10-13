@@ -23,10 +23,10 @@ const USER = {
 const PROJECTS = [
   {
     id: 1,
-    title: "Мыло ручной работы",
+    title: "Дождевик для собак",
     cover:
-      "first_project/main_page.png",
-    tags: ["Ozon", "Карточки"],
+      "third_project/1.png",
+    tags: ["Wildberries", "Карточки", "Ozon"],
     description:
       "",
   },
@@ -35,19 +35,47 @@ const PROJECTS = [
     title: "Наматрасник",
     cover:
       "second_project/1.png",
-    tags: ["Wildberries", "Карточки"],
+    tags: ["Wildberries", "Карточки", "Ozon"],
     description:
       "",
   },
+  {
+    id: 3,
+    title: "Электронные часы",
+    cover:
+      "fifth_project/1.png",
+    tags: ["Wildberries", "Карточки", "Ozon"],
+    description:
+      "",
+  },
+  {
+    id: 4,
+    title: "Автомобильная щетка",
+    cover:
+      "fourth_project/1.png",
+    tags: ["Wildberries", "Карточки", "Ozon"],
+    description:
+      "",
+  },
+  {
+    id: 5,
+    title: "Мыло ручной работы",
+    cover:
+      "first_project/main_page.png",
+    tags: ["Ozon", "Карточки", "Wildberries"],
+    description:
+      "",
+  },  
 ];
 
 // ===== Галерея / Карусель =====
 const PROJECT_IMAGES = {
   1: [
-    "first_project/main_page.png",
-    "first_project/2.png",
-    "first_project/3.png",
-    "first_project/4.png",
+    "third_project/1.png",
+    "third_project/2.png",
+    "third_project/3.png",
+    "third_project/4.png",
+    "third_project/5.png",
   ],
   2: [
     "second_project/1.png",
@@ -55,6 +83,26 @@ const PROJECT_IMAGES = {
     "second_project/3.png",
     "second_project/4.png",
     "second_project/5.png",
+  ],
+  3: [
+    "fifth_project/1.png",
+    "fifth_project/2.png",
+    "fifth_project/3.png",
+    "fifth_project/4.png",
+    "fifth_project/5.png",
+  ],
+  4: [
+    "fourth_project/1.png",
+    "fourth_project/2.png",
+    "fourth_project/3.png",
+    "fourth_project/4.png",
+    "fourth_project/5.png",
+  ],
+  5: [
+    "first_project/main_page.png",
+    "first_project/2.png",
+    "first_project/3.png",
+    "first_project/4.png",
   ],
 };
 
@@ -182,11 +230,13 @@ const Badge = ({ children }) => (
 );
 
 const useDarkMode = () => {
-  const [enabled, setEnabled] = useState(false);
+  const [enabled, setEnabled] = useState(true); // Дефолтная тема - темная
   useEffect(() => {
-    const stored = localStorage.getItem("prefers-dark") === "true";
-    setEnabled(stored);
-    if (stored) document.documentElement.classList.add("dark");
+    const stored = localStorage.getItem("prefers-dark");
+    // Если в localStorage нет сохраненной темы, используем темную по умолчанию
+    const shouldUseDark = stored === null ? true : stored === "true";
+    setEnabled(shouldUseDark);
+    if (shouldUseDark) document.documentElement.classList.add("dark");
   }, []);
   useEffect(() => {
     document.documentElement.classList.toggle("dark", enabled);
@@ -313,6 +363,7 @@ function ContactForm() {
 export default function PortfolioSite() {
   const { enabled, setEnabled } = useDarkMode();
   const [lightbox, setLightbox] = useState({ open: false, images: [], title: "" });
+  const [showAllProjects, setShowAllProjects] = useState(false);
 
   const openProject = (project) => {
     const images = PROJECT_IMAGES[project.id] || [];
@@ -405,7 +456,7 @@ export default function PortfolioSite() {
       {/* ===== Work / Portfolio ===== */}
       <Section id="work" title="Работы">
         <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
-         {PROJECTS.map((p) => (
+         {(showAllProjects ? PROJECTS : PROJECTS.slice(0, 3)).map((p) => (
             <article
               key={p.id}
               className="group overflow-hidden rounded-2xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 cursor-pointer"
@@ -416,7 +467,7 @@ export default function PortfolioSite() {
                   loading="lazy"
                   src={p.cover}
                   alt={p.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 bg-black"
                 />
                 <div className="absolute inset-x-0 bottom-0 p-4 text-white bg-gradient-to-t from-black/60 via-black/30 to-transparent transition-all duration-300 md:opacity-0 md:translate-y-2 md:group-hover:opacity-100 md:group-hover:translate-y-0">
                   <div className="flex items-center justify-between gap-4">
@@ -433,6 +484,27 @@ export default function PortfolioSite() {
             </article>
           ))}
         </div>
+
+        {/* Кнопка "Показать все/Скрыть" */}
+        {PROJECTS.length > 3 && (
+          <div className="flex justify-end mt-8">
+            <button
+              onClick={() => {
+                if (showAllProjects) {
+                  // При скрытии проектов - плавный переход вверх к блоку работ
+                  document.getElementById('work')?.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                  });
+                }
+                setShowAllProjects(!showAllProjects);
+              }}
+              className="px-6 py-3 rounded-xl border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/10 transition-colors duration-200 font-medium"
+            >
+              {showAllProjects ? "Скрыть" : "Показать все"}
+            </button>
+          </div>
+        )}
 
         {/* Модалка с каруселью */}
         <CarouselModal
