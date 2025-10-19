@@ -65,7 +65,43 @@ const PROJECTS = [
     tags: ["Ozon", "Карточки", "Wildberries"],
     description:
       "",
-  },  
+  },
+  {
+    id: 6,
+    title: "Автомобильные салфетки",
+    cover:
+      "sixth_project/1.png",
+    tags: ["Ozon", "Карточки", "Wildberries"],
+    description:
+      "",
+  },
+  {
+    id: 7,
+    title: "Автомобильные салфетки",
+    cover:
+      "seventh_project/1.png",
+    tags: ["Ozon", "Карточки", "Wildberries"],
+    description:
+      "",
+  },
+  {
+    id: 8,
+    title: "Автомобильные салфетки",
+    cover:
+      "eighth_project/1.png",
+    tags: ["Ozon", "Карточки", "Wildberries"],
+    description:
+      "",
+  },
+  {
+    id: 9,
+    title: "Веб-студия Devguys",
+    cover:
+      "ninth_project/1.png",
+    tags: ["Ozon", "Карточки", "Wildberries"],
+    description:
+      "",
+  },
 ];
 
 // ===== Галерея / Карусель =====
@@ -104,10 +140,54 @@ const PROJECT_IMAGES = {
     "first_project/3.png",
     "first_project/4.png",
   ],
+  6: [
+    "sixth_project/1.png",
+    "sixth_project/2.png",
+    "sixth_project/3.png",
+  ],
+  7: [
+    "seventh_project/1.png",
+    "seventh_project/2.png",
+    "seventh_project/3.png",
+
+  ],
+  8: [
+    "eighth_project/1.png",
+    "eighth_project/2.png",
+    "eighth_project/3.png",
+  ],
+  9: [
+    "ninth_project/1.png",
+  ],
 };
 
 function CarouselModal({ open, onClose, images = [], title }) {
   const [index, setIndex] = useState(0);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [isLongImage, setIsLongImage] = useState(false);
+
+  // Функция для определения длинного изображения
+  const checkIfLongImage = (img) => {
+    if (img.naturalWidth && img.naturalHeight) {
+      const aspectRatio = img.naturalHeight / img.naturalWidth;
+      // Если соотношение высоты к ширине больше 2.5, считаем изображение длинным
+      return aspectRatio > 2.5;
+    }
+    return false;
+  };
+
+  // Обработчик загрузки изображения
+  const handleImageLoad = (e) => {
+    const img = e.target;
+    setImageLoaded(true);
+    setIsLongImage(checkIfLongImage(img));
+  };
+
+  // Сброс состояния при смене изображения
+  useEffect(() => {
+    setImageLoaded(false);
+    setIsLongImage(false);
+  }, [index]);
 
   useEffect(() => {
     if (!open) return;
@@ -161,43 +241,60 @@ function CarouselModal({ open, onClose, images = [], title }) {
           <span className="text-sm opacity-90">{title}</span>
           <button type="button" aria-label="Закрыть" onClick={onClose} className="text-xl leading-none">×</button>
         </div>
-        <div id="carousel-viewport" className="relative select-none max-w-full">
-          <img
-            loading="lazy"
-            src={images[index]}
-            alt={`${title} — слайд ${index + 1}`}
-            className="block max-w-[90vw] max-h-[85vh] w-auto h-auto object-contain bg-black"
-          />
-          <button
-            type="button"
-            aria-label="Предыдущий"
-            onClick={() => setIndex((i) => (i - 1 + images.length) % images.length)}
-            className="absolute left-2 top-1/2 -translate-y-1/2 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20"
+        <div className="relative">
+          <div 
+            id="carousel-viewport" 
+            className={`relative select-none max-w-full ${
+              isLongImage ? 'max-h-[85vh] overflow-auto' : ''
+            }`}
           >
-            ◀
-          </button>
-          <button
-            type="button"
-            aria-label="Следующий"
-            onClick={() => setIndex((i) => (i + 1) % images.length)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20"
-          >
-            ▶
-          </button>
-          <div className="absolute bottom-3 inset-x-0 flex items-center justify-center gap-2">
-            {images.map((_, i) => (
-              <button
-                key={i}
-                type="button"
-                onClick={() => setIndex(i)}
-                className={
-                  "w-2.5 h-2.5 rounded-full " +
-                  (i === index ? "bg-white" : "bg-white/40 hover:bg-white/60")
-                }
-                aria-label={`Перейти к слайду ${i + 1}`}
-              />
-            ))}
+            <img
+              loading="lazy"
+              src={images[index]}
+              alt={`${title} — слайд ${index + 1}`}
+              className={`block w-auto h-auto object-contain bg-black ${
+                isLongImage ? '' : 'max-w-[90vw] max-h-[85vh]'
+              }`}
+              style={isLongImage ? { minWidth: '90vw', minHeight: 'auto' } : {}}
+              onLoad={handleImageLoad}
+            />
           </div>
+          
+          {/* Кнопки навигации - показываем только если больше одной картинки */}
+          {images.length > 1 && (
+            <>
+              <button
+                type="button"
+                aria-label="Предыдущий"
+                onClick={() => setIndex((i) => (i - 1 + images.length) % images.length)}
+                className="absolute left-2 top-1/2 -translate-y-1/2 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 z-10 pointer-events-auto"
+              >
+                ◀
+              </button>
+              <button
+                type="button"
+                aria-label="Следующий"
+                onClick={() => setIndex((i) => (i + 1) % images.length)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 z-10 pointer-events-auto"
+              >
+                ▶
+              </button>
+              <div className="absolute bottom-3 inset-x-0 flex items-center justify-center gap-2 z-10 pointer-events-auto">
+                {images.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => setIndex(i)}
+                    className={
+                      "w-2.5 h-2.5 rounded-full " +
+                      (i === index ? "bg-white" : "bg-white/40 hover:bg-white/60")
+                    }
+                    aria-label={`Перейти к слайду ${i + 1}`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
@@ -460,14 +557,16 @@ export default function PortfolioSite() {
             <article
               key={p.id}
               className="group overflow-hidden rounded-2xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 cursor-pointer"
+              style={{ width: '300px', height: '400px' }}
               onClick={() => openProject(p)}
             >
-              <div className="overflow-hidden relative">
+              <div className="overflow-hidden relative w-full h-full">
                 <img
                   loading="lazy"
                   src={p.cover}
                   alt={p.title}
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 bg-black"
+                  className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105 bg-black"
+                  style={{ objectFit: 'cover', objectPosition: 'top' }}
                 />
                 <div className="absolute inset-x-0 bottom-0 p-4 text-white bg-gradient-to-t from-black/60 via-black/30 to-transparent transition-all duration-300 md:opacity-0 md:translate-y-2 md:group-hover:opacity-100 md:group-hover:translate-y-0">
                   <div className="flex items-center justify-between gap-4">
