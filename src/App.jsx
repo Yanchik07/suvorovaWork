@@ -499,6 +499,27 @@ export default function PortfolioSite() {
     return () => (document.body.style.overflow = "");
   }, [lightbox.open]);
 
+  // Отслеживание переходов для Яндекс.Метрики в SPA
+  useEffect(() => {
+    const handleAnchorClick = (e) => {
+      const target = e.target.closest('a[href^="#"]');
+      if (target && window.ym) {
+        const href = target.getAttribute('href');
+        if (href && href !== '#') {
+          // Отслеживаем переход к якорю
+          window.ym(104708575, 'hit', window.location.pathname + href);
+        }
+      }
+    };
+
+    // Отслеживаем клики по якорным ссылкам
+    document.addEventListener('click', handleAnchorClick);
+
+    return () => {
+      document.removeEventListener('click', handleAnchorClick);
+    };
+  }, []);
+
   return (
     <div id="top" className="min-h-screen bg-white text-gray-900 dark:bg-neutral-950 dark:text-neutral-100">
       {/* ===== Header / Nav ===== */}

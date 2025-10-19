@@ -6,7 +6,7 @@ import './index.css'
 // Инициализация Яндекс.Метрики для SPA
 if (typeof window !== 'undefined' && window.ym) {
   // Отслеживаем загрузку страницы
-  window.ym(104708408, 'hit', window.location.href);
+  window.ym(104708575, 'hit', window.location.href);
 }
 
 createRoot(document.getElementById('root')).render(
