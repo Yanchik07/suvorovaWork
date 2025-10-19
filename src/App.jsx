@@ -158,6 +158,7 @@ const PROJECT_IMAGES = {
   ],
   9: [
     "ninth_project/1.png",
+    "ninth_project/2.png",
   ],
 };
 
@@ -166,27 +167,46 @@ function CarouselModal({ open, onClose, images = [], title }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [isLongImage, setIsLongImage] = useState(false);
 
+  // Список файлов, которые должны отображаться как длинные (с вертикальным скроллом)
+  const longImageFiles = [
+    'ninth_project/1.png', // лендинг
+    'ninth_project/2.png'  // мобильный дизайн
+  ];
+
+  // Список файлов мобильных дизайнов (нужны ограничения по ширине)
+  const mobileImageFiles = [
+    'ninth_project/2.png'  // мобильный дизайн
+  ];
+
   // Функция для определения длинного изображения
-  const checkIfLongImage = (img) => {
-    if (img.naturalWidth && img.naturalHeight) {
-      const aspectRatio = img.naturalHeight / img.naturalWidth;
-      // Если соотношение высоты к ширине больше 2.5, считаем изображение длинным
-      return aspectRatio > 2.5;
-    }
-    return false;
+  const checkIfLongImage = (currentImagePath) => {
+    // Проверяем, есть ли текущий файл в списке длинных изображений
+    return longImageFiles.some(longFile => currentImagePath.includes(longFile));
+  };
+
+  // Функция для определения мобильного дизайна
+  const checkIfMobileImage = (currentImagePath) => {
+    // Проверяем, есть ли текущий файл в списке мобильных изображений
+    return mobileImageFiles.some(mobileFile => currentImagePath.includes(mobileFile));
   };
 
   // Обработчик загрузки изображения
   const handleImageLoad = (e) => {
     const img = e.target;
     setImageLoaded(true);
-    setIsLongImage(checkIfLongImage(img));
+    setIsLongImage(checkIfLongImage(images[index]));
   };
 
   // Сброс состояния при смене изображения
   useEffect(() => {
     setImageLoaded(false);
     setIsLongImage(false);
+    
+    // Сбрасываем позицию скролла при смене изображения
+    const viewport = document.getElementById('carousel-viewport');
+    if (viewport) {
+      viewport.scrollTop = 0;
+    }
   }, [index]);
 
   useEffect(() => {
@@ -255,7 +275,13 @@ function CarouselModal({ open, onClose, images = [], title }) {
               className={`block w-auto h-auto object-contain bg-black ${
                 isLongImage ? '' : 'max-w-[90vw] max-h-[85vh]'
               }`}
-              style={isLongImage ? { minWidth: '90vw', minHeight: 'auto' } : {}}
+              style={
+                isLongImage 
+                  ? checkIfMobileImage(images[index])
+                    ? { maxWidth: '400px', width: 'auto', height: 'auto' } // ограничиваем ширину для мобильных дизайнов
+                    : { minWidth: '90vw', minHeight: 'auto' } // полная ширина для лендингов
+                  : {}
+              }
               onLoad={handleImageLoad}
             />
           </div>
