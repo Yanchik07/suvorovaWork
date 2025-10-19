@@ -578,12 +578,12 @@ export default function PortfolioSite() {
 
       {/* ===== Work / Portfolio ===== */}
       <Section id="work" title="Работы">
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-8 justify-items-center">
          {(showAllProjects ? PROJECTS : PROJECTS.slice(0, 3)).map((p) => (
             <article
               key={p.id}
               className="group overflow-hidden rounded-2xl border border-black/10 dark:border-white/10 bg-white/60 dark:bg-white/5 cursor-pointer"
-              style={{ width: '300px', height: '400px' }}
+              style={{ height: '480px', width: '350px' }}
               onClick={() => openProject(p)}
             >
               <div className="overflow-hidden relative w-full h-full">
